@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use validator::Validate;
 
-#[derive(Debug, Default, Deserialize, Validate)]
+#[derive(Debug, Default, Deserialize, ToSchema, Validate)]
 pub struct Pager<Id> {
     pub after: Option<Id>,
     pub before: Option<Id>,
@@ -9,7 +10,7 @@ pub struct Pager<Id> {
     pub items: Option<i64>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct Page<T> {
     pub items: Vec<T>,
     pub has_previous: bool,

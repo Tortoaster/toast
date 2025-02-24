@@ -1,13 +1,10 @@
 use axum::{
-    extract::{Query, State},
-    Form, Json, Router,
+    extract::{Path, Query, State},
+    Form, Json,
 };
-use axum_extra::{
-    extract::WithRejection,
-    routing::{RouterExt, TypedPath},
-};
+use axum_extra::extract::WithRejection;
 use axum_valid::Valid;
-use serde::Deserialize;
+use utoipa_axum::{router::OpenApiRouter, routes};
 
 use crate::{
     dto::projects::{NewProject, Project, ProjectId, ProjectIndex, ProjectPreview},
@@ -20,31 +17,24 @@ use crate::{
     },
 };
 
-pub fn public_router() -> Router<AppState> {
-    Router::new()
-        .typed_get(list_projects)
-        .typed_get(get_project)
+pub fn public_router() -> OpenApiRouter<AppState> {
+    OpenApiRouter::new()
+        .routes(routes!(list_projects))
+        .routes(routes!(get_project))
 }
 
-pub fn protected_router() -> Router<AppState> {
-    Router::new()
-        .typed_post(post_project)
-        .typed_put(put_project)
-        .typed_delete(delete_project)
+pub fn protected_router() -> OpenApiRouter<AppState> {
+    OpenApiRouter::new().routes(routes!(post_project, put_project, delete_project))
 }
 
-#[derive(Copy, Clone, Debug, TypedPath)]
-#[typed_path("/projects")]
-pub struct ProjectsUrl;
-
-#[derive(Clone, Debug, Deserialize, TypedPath)]
-#[typed_path("/projects/:id")]
-pub struct ProjectUrl {
-    pub id: String,
-}
-
+#[utoipa::path(
+    get,
+    path = "/projects",
+    responses(
+        (status = 200, description = "Comments found successfully", body = Page<ProjectPreview>),
+    ),
+)]
 async fn list_projects(
-    _: ProjectsUrl,
     State(repo): State<ProjectRepository>,
     WithRejection(Valid(Query(pager)), _): WithAppRejection<Valid<Query<Pager<ProjectIndex>>>>,
 ) -> AppResult<Json<Page<ProjectPreview>>> {
@@ -52,16 +42,33 @@ async fn list_projects(
     Ok(Json(page))
 }
 
+#[utoipa::path(
+    get,
+    path = "/projects/{id}",
+    params(
+        ("id" = String, Path, description = "ID of project to fetch"),
+    ),
+    responses(
+        (status = 200, description = "Project found successfully", body = Project),
+    ),
+)]
 async fn get_project(
-    ProjectUrl { id }: ProjectUrl,
+    Path(id): Path<String>,
     State(project_repo): State<ProjectRepository>,
 ) -> AppResult<Json<Project>> {
     let project = project_repo.read(&id).await?.ok_or(AppError::NotFound)?;
     Ok(Json(project))
 }
 
+#[utoipa::path(
+    post,
+    path = "/projects",
+    params(NewProject),
+    responses(
+        (status = 200, description = "Project posted successfully", body = ProjectId),
+    ),
+)]
 async fn post_project(
-    _: ProjectsUrl,
     _: Admin,
     State(repo): State<ProjectRepository>,
     WithRejection(Valid(Form(new_project)), _): WithAppRejection<Valid<Form<NewProject>>>,
@@ -70,9 +77,20 @@ async fn post_project(
     Ok(Json(project))
 }
 
+#[utoipa::path(
+    put,
+    path = "/projects/{id}",
+    params(
+        ("id" = String, Path, description = "ID of project to update"),
+        NewProject,
+    ),
+    responses(
+        (status = 200, description = "Project updated successfully"),
+    ),
+)]
 async fn put_project(
-    ProjectUrl { id }: ProjectUrl,
     _: Admin,
+    Path(id): Path<String>,
     State(repo): State<ProjectRepository>,
     WithRejection(Valid(Form(new_project)), _): WithAppRejection<Valid<Form<NewProject>>>,
 ) -> AppResult<()> {
@@ -80,9 +98,19 @@ async fn put_project(
     Ok(())
 }
 
+#[utoipa::path(
+    delete,
+    path = "/projects/{id}",
+    params(
+        ("id" = String, Path, description = "ID of project to delete"),
+    ),
+    responses(
+        (status = 200, description = "Project deleted successfully"),
+    ),
+)]
 async fn delete_project(
-    ProjectUrl { id }: ProjectUrl,
     _: Admin,
+    Path(id): Path<String>,
     State(repo): State<ProjectRepository>,
 ) -> AppResult<()> {
     repo.delete(&id).await?;

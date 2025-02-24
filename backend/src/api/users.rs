@@ -1,23 +1,16 @@
 use axum::response::Redirect;
-use axum_extra::{extract::WithRejection, routing::TypedPath};
+use axum_extra::extract::WithRejection;
 use axum_oidc::OidcRpInitiatedLogout;
 
-use crate::{api::projects::ProjectsUrl, config::AppConfig, error::WithAppRejection};
+use crate::{config::AppConfig, error::WithAppRejection};
 
-#[derive(Copy, Clone, Debug, Default, TypedPath)]
-#[typed_path("/login")]
-pub struct LoginUrl;
-
-pub async fn login(_: LoginUrl) -> Redirect {
-    Redirect::temporary(&ProjectsUrl.to_string())
+#[utoipa::path(get, path = "/login")]
+pub async fn login() -> Redirect {
+    Redirect::temporary("/projects")
 }
 
-#[derive(Copy, Clone, Debug, Default, TypedPath)]
-#[typed_path("/logout")]
-pub struct LogoutUrl;
-
+#[utoipa::path(get, path = "/logout")]
 pub async fn logout(
-    _: LogoutUrl,
     WithRejection(logout, _): WithAppRejection<OidcRpInitiatedLogout>,
 ) -> OidcRpInitiatedLogout {
     logout.with_post_logout_redirect(AppConfig::get().oidc.redirect_url.parse().unwrap())

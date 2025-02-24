@@ -1,7 +1,6 @@
 use std::time::Duration;
 
-use axum::{error_handling::HandleErrorLayer, response::IntoResponse, routing::get, Router};
-use axum_extra::routing::RouterExt;
+use axum::{error_handling::HandleErrorLayer, response::IntoResponse, routing::get};
 use axum_oidc::{error::MiddlewareError, OidcLoginLayer};
 use axum_prometheus::PrometheusMetricLayerBuilder;
 use tokio::{net::TcpListener, signal, task::AbortHandle};
@@ -10,6 +9,8 @@ use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tower_sessions::{cookie::SameSite, ExpiredDeletion, Expiry, SessionManagerLayer};
 use tower_sessions_sqlx_store::PostgresStore;
 use tracing::info;
+use utoipa_axum::{router::OpenApiRouter, routes};
+use utoipa_swagger_ui::SwaggerUi;
 
 use crate::{config::AppConfig, error::AppError, state::AppState, utils::claims::AppClaims};
 
@@ -64,26 +65,28 @@ async fn main() {
         .layer(toast_handle_error_layer)
         .layer(oidc_auth_layer);
 
-    let app = Router::new()
+    let (app, api) = OpenApiRouter::new()
         // Login required
         .merge(api::projects::protected_router())
         .merge(api::comments::protected_router())
-        .merge(api::files::public_router())
-        .typed_get(api::users::login)
+        .merge(api::files::protected_router())
+        .routes(routes!(api::users::login))
         .layer(oidc_login_service)
         // Login optional
+        .routes(routes!(api::users::logout))
+        .layer(oidc_auth_service)
+        .layer(session_layer)
+        // Publicly available
         .merge(api::projects::public_router())
         .merge(api::comments::public_router())
-        .typed_get(api::users::logout)
-        .layer(oidc_auth_service)
-        // Publicly available
-        .layer(session_layer)
-        .fallback(|| async { AppError::NotFound })
-        .route("/metrics", get(|| async move { metric_handle.render() }))
+        .fallback(async || AppError::NotFound)
+        .route("/metrics", get(async move || metric_handle.render()))
         .layer(prometheus_layer)
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())
-        .with_state(state);
+        .with_state(state)
+        .split_for_parts();
+    let app = app.merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api));
 
     let addr = config.socket_addr();
     let listener = TcpListener::bind(addr).await.unwrap();

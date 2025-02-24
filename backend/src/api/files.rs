@@ -1,11 +1,9 @@
 use axum::{
     extract::{DefaultBodyLimit, Multipart, State},
-    Json, Router,
+    Json,
 };
-use axum_extra::{
-    extract::WithRejection,
-    routing::{RouterExt, TypedPath},
-};
+use axum_extra::extract::WithRejection;
+use utoipa_axum::{router::OpenApiRouter, routes};
 use uuid::Uuid;
 
 use crate::{
@@ -16,18 +14,14 @@ use crate::{
     utils::claims::Admin,
 };
 
-pub fn public_router() -> Router<AppState> {
-    Router::new()
-        .typed_post(post_image)
+pub fn protected_router() -> OpenApiRouter<AppState> {
+    OpenApiRouter::new()
+        .routes(routes!(post_image))
         .layer(DefaultBodyLimit::max(1024 * 1024 * 10))
 }
 
-#[derive(Copy, Clone, Debug, Default, TypedPath)]
-#[typed_path("/uploads")]
-pub struct ImagesUrl;
-
+#[utoipa::path(post, path = "/uploads")]
 async fn post_image(
-    _: ImagesUrl,
     _: Admin,
     State(file_repo): State<FileRepository>,
     WithRejection(mut parts, _): WithAppRejection<Multipart>,

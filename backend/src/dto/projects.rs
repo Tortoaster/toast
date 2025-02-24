@@ -4,13 +4,14 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, NoneAsEmptyString};
 use sqlx::types::time::OffsetDateTime;
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 use validator::Validate;
 
 // Requests
 
 #[serde_as]
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, ToSchema, IntoParams, Validate)]
 #[serde(rename_all = "kebab-case")]
 pub struct NewProject {
     #[validate(length(min = 1, max = 128))]
@@ -65,7 +66,7 @@ impl NewProject {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, ToSchema)]
 #[serde(rename_all = "kebab-case")]
 pub struct ProjectIndex {
     #[serde(with = "time::serde::rfc3339")]
@@ -75,7 +76,7 @@ pub struct ProjectIndex {
 
 // Responses
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectPreview {
     pub id: String,
@@ -86,18 +87,18 @@ pub struct ProjectPreview {
     pub date_posted: OffsetDateTime,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct ProjectId {
     pub id: String,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectThumbnailId {
     pub thumbnail_id: Uuid,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Project {
     pub id: String,

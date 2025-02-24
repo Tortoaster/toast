@@ -1,12 +1,13 @@
 use serde::Serialize;
 use serde_with::serde_derive::Deserialize;
 use time::OffsetDateTime;
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 use validator::Validate;
 
 // Requests
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, ToSchema, IntoParams, Validate)]
 pub struct NewComment {
     #[validate(length(min = 1, max = 4096))]
     pub message: String,
@@ -24,7 +25,7 @@ pub struct CommentUserId {
 
 // Responses
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct CommentWithUser {
     pub id: i32,
