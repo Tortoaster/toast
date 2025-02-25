@@ -1,9 +1,9 @@
 <script lang="ts">
     import {formatDistanceToNow} from "date-fns";
-    import type {IProjectPreview} from "$lib/types/projects";
+    import type {PageProjectPreviewItemsInner} from "$lib/client";
 
     interface Props {
-        project: IProjectPreview;
+        project: PageProjectPreviewItemsInner;
         bucketUrl: string;
     }
 
