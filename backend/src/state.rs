@@ -9,7 +9,7 @@ use crate::{config::AppConfig, repository::ProjectRepository};
 
 #[derive(Clone, Debug)]
 pub struct AppState {
-    pub(super) pool: SqlitePool,
+    pool: SqlitePool,
 }
 
 impl AppState {

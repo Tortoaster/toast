@@ -1,6 +1,8 @@
-use sqlx::{query, query_as, SqlitePool};
-use time::OffsetDateTime;
-use uuid::Uuid;
+use sqlx::{
+    query, query_as,
+    types::{time::OffsetDateTime, uuid::Uuid},
+    SqlitePool,
+};
 
 use crate::{
     dto::{Project, ProjectIndex, ProjectPreview},

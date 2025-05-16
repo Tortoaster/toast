@@ -1,9 +1,8 @@
-use axum::routing::get;
+use axum::{routing::get, Router};
 use axum_prometheus::PrometheusMetricLayerBuilder;
 use tokio::net::TcpListener;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
-use utoipa_axum::{router::OpenApiRouter, routes};
 
 use crate::{config::AppConfig, error::AppError, state::AppState};
 
@@ -30,16 +29,15 @@ async fn main() {
 
     let state = AppState::new().await;
 
-    let (app, api) = OpenApiRouter::new()
-        .routes(routes!(api::list_projects))
-        .routes(routes!(api::get_project))
+    let app = Router::new()
+        .route("/projects", get(api::list_projects))
+        .route("/projects/{id}", get(api::get_project))
         .fallback(async || AppError::NotFound)
         .route("/metrics", get(async move || metric_handle.render()))
         .layer(prometheus_layer)
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())
-        .with_state(state)
-        .split_for_parts();
+        .with_state(state);
 
     let addr = config.socket_addr();
     let listener = TcpListener::bind(addr).await.unwrap();

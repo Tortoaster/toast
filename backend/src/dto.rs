@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
-use sqlx::types::time::OffsetDateTime;
-use utoipa::ToSchema;
-use uuid::Uuid;
+use sqlx::types::{time::OffsetDateTime, uuid::Uuid};
 
-#[derive(Debug, Deserialize, ToSchema)]
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct ProjectIndex {
     #[serde(with = "time::serde::rfc3339")]
@@ -11,7 +9,7 @@ pub struct ProjectIndex {
     pub id: String,
 }
 
-#[derive(Debug, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectPreview {
     pub id: String,
@@ -22,7 +20,7 @@ pub struct ProjectPreview {
     pub date_posted: OffsetDateTime,
 }
 
-#[derive(Debug, Serialize, ToSchema)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Project {
     pub id: String,
