@@ -8,34 +8,12 @@ services:
     environment:
       HOST: "0.0.0.0"
       RUST_LOG: "toast=info,warn"
-      DATABASE__URL: "postgres://user@db/toast"
-      DATABASE__PASSWORD: "password"
-      S3__REGION: "eu-central-1"
-      S3__ENDPOINT_URL: "http://object-store:9000/"
-      S3__ACCESS_KEY_ID: "user"
-      S3__SECRET_ACCESS_KEY: "password"
-      OIDC__CLIENT_ID: "tortoaster"
-      OIDC__CLIENT_SECRET: "UzuoAuMFtHuf4USSl2CVGmgXockttxxh"
-      OIDC__ISSUER_URL: "http://iam-provider:8003/realms/tortoaster"
-      OIDC__REDIRECT_URL: "http://localhost:8000/projects"
+      DATABASE__URL: "sqlite://sqlite.db"
     depends_on:
       db-migrate:
         condition: service_completed_successfully
       object-store-migrate:
         condition: service_completed_successfully
-
-  db:
-    image: postgres:16.2
-    ports: [ "5432:5432" ]
-    volumes: [ "./postgres:/docker-entrypoint-initdb.d:ro" ]
-    environment:
-      POSTGRES_USER: "user"
-      POSTGRES_PASSWORD: "password"
-      POSTGRES_DB: "toast"
-    healthcheck:
-      test: "pg_isready"
-      interval: 1s
-      retries: 10
 
   db-migrate:
     build:
@@ -45,11 +23,9 @@ services:
     volumes:
       - "./migrations:/app/migrations:ro"
       - "./fixtures:/app/fixtures:ro"
+      - "./sqlite.db:/app/sqlite.db:rw"
     environment:
-      DATABASE_URL: "postgres://user:password@db/toast"
-    depends_on:
-      iam-provider:
-        condition: service_healthy
+      DATABASE_URL: "sqlite://sqlite.db"
 
   object-store:
     image: quay.io/minio/minio
@@ -66,9 +42,6 @@ services:
       MINIO_IDENTITY_OPENID_CLIENT_SECRET: "pNvFwKbjguoTGCibt9ErDdgwHYif1pN4"
       MINIO_IDENTITY_OPENID_DISPLAY_NAME: "KeyCloak Admin"
       MINIO_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC: "on"
-    depends_on:
-      iam-provider:
-        condition: service_healthy
     healthcheck:
       test: "curl -I http://localhost:9000/minio/health/live"
       interval: 1s
@@ -87,37 +60,3 @@ services:
         /usr/bin/mc anonymous set download myminio/toast && \
         /usr/bin/mc mirror --overwrite /app myminio/toast \
       "
-
-  smtp-server:
-    image: marlonb/mailcrab:v1.1.0
-    ports: [ "8002:8002" ]
-    environment:
-      HTTP_PORT: "8002"
-      SMTP_PORT: "25"
-
-  iam-provider:
-    image: quay.io/keycloak/keycloak:24.0
-    volumes: [ "./keycloak:/opt/keycloak/data/import:ro" ]
-    ports: [ "8003:8003" ]
-    environment:
-      KC_DB: "postgres"
-      KC_DB_URL: "jdbc:postgresql://db/keycloak"
-      KC_DB_USERNAME: "user"
-      KC_DB_PASSWORD: "password"
-      KC_HTTP_PORT: "8003"
-      KC_HEALTH_ENABLED: "true"
-    # Entrypoint used to import master realm separately, as doing so directly is unsupported
-    entrypoint: >
-      /bin/sh -c " \
-        /opt/keycloak/bin/kc.sh import --file /opt/keycloak/data/import/master-realm.json && \
-        /opt/keycloak/bin/kc.sh start-dev --import-realm
-      "
-    depends_on:
-      db:
-        condition: service_healthy
-      smtp-server:
-        condition: service_started
-    healthcheck:
-      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8003;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3" ]
-      interval: 5s
-      retries: 5

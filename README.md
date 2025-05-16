@@ -24,7 +24,7 @@ docker compose --profile full up -d
 #### sqlx
 
 ```shell
-cargo install sqlx-cli --no-default-features --features rustls,postgres
+cargo install sqlx-cli --no-default-features --features rustls,sqlite
 ```
 
 ### Run dependencies
@@ -51,7 +51,7 @@ Should be run when:
 * New database migrations are created
 
 ```shell
-export DATABASE_URL=postgres://user:password@localhost/toast
+export DATABASE_URL=sqlite://../sqlite.db
 cargo sqlx prepare
 ```
 
@@ -78,5 +78,5 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.

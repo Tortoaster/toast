@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "\nSELECT id, name, preview, thumbnail_id AS \"thumbnail_id: Uuid\", date_posted AS \"date_posted: OffsetDateTime\"\nFROM projects\nWHERE NOT deleted\nORDER BY date_posted, id DESC\nLIMIT ?1;\n                    ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "name",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "preview",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "thumbnail_id: Uuid",
+        "ordinal": 3,
+        "type_info": "Null"
+      },
+      {
+        "name": "date_posted: OffsetDateTime",
+        "ordinal": 4,
+        "type_info": "Null"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "b3b30438277f0b00bd5616c3b55b8b1f7290e4c0d0636bb467fcd07aab9af223"
+}
