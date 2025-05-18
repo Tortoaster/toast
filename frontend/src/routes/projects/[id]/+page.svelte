@@ -23,7 +23,7 @@
         <div class="flex">
             <span class="text-white italic hidden lg:block">{day},&nbsp;</span>
             <span class="text-white italic">{date}</span>
-            <span class:hidden={+year !== new Date().getFullYear()} class="text-white italic">,&nbsp;{year}</span>
+            <span class:hidden={year !== `${new Date().getFullYear()}`} class="text-white italic">,&nbsp;{year}</span>
         </div>
     </div>
 </Overlay>
