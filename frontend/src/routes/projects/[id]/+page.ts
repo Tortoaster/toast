@@ -6,7 +6,8 @@ import type { paths } from "$lib/client";
 import createClient from "openapi-fetch";
 
 export const load: PageLoad = async ({ params, fetch }) => {
-  const client = createClient<paths>({ baseUrl: PUBLIC_API_URL, fetch: fetch });
+  // FIXME: use svelte's fetch when openapi-fetch fixes it
+  const client = createClient<paths>({ baseUrl: PUBLIC_API_URL });
 
   const { data: project, response } = await client.GET("/projects/{id}", {
     params: { path: { id: params.id } },

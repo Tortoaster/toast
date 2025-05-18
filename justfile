@@ -5,7 +5,7 @@ up:
 down:
     docker compose down -v
 gen:
-    cd backend && DATABASE_URL=sqlite://../sqlite.db cargo sqlx prepare && cd ../frontend && deno i --allow-scripts && deno task gen
+    cd backend && DATABASE_URL=sqlite://../sqlite.db cargo sqlx prepare && cd ../frontend && deno i --allow-scripts && deno task prepare
 dev:
     cd frontend && deno task dev
 fmt:

@@ -10,7 +10,8 @@ export const load: PageLoad = async ({ fetch }) => {
     .then((response) => response.text())
     .then((md) => marked.parse(md));
 
-  const client = createClient<paths>({ baseUrl: PUBLIC_API_URL, fetch: fetch });
+  // FIXME: use svelte's fetch when openapi-fetch fixes it
+  const client = createClient<paths>({ baseUrl: PUBLIC_API_URL });
 
   const { data: projects, response } = await client.GET("/projects");
 

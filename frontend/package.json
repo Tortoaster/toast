@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "gen": "openapi-typescript openapi.json -o src/lib/client.ts --root-types --root-types-no-schema-prefix",
+    "prepare": "openapi-typescript openapi.json -o src/lib/client.ts --root-types --root-types-no-schema-prefix",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
