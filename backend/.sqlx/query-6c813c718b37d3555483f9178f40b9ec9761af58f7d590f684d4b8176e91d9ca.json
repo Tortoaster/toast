@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\nSELECT id, name, preview, thumbnail_id AS \"thumbnail_id: Uuid\", date_posted AS \"date_posted: OffsetDateTime\"\nFROM projects\nWHERE NOT deleted AND (date_posted, id) < (?1, ?2)\nORDER BY date_posted, id DESC\nLIMIT ?3;\n                    ",
+  "query": "\nSELECT id, name, preview, thumbnail_id AS \"thumbnail_id: _\", date_posted AS \"date_posted: _\"\nFROM projects\nWHERE NOT deleted\nORDER BY date_posted, id DESC\nLIMIT ?1;\n                    ",
   "describe": {
     "columns": [
       {
@@ -19,18 +19,18 @@
         "type_info": "Text"
       },
       {
-        "name": "thumbnail_id: Uuid",
+        "name": "thumbnail_id: _",
         "ordinal": 3,
         "type_info": "Null"
       },
       {
-        "name": "date_posted: OffsetDateTime",
+        "name": "date_posted: _",
         "ordinal": 4,
         "type_info": "Null"
       }
     ],
     "parameters": {
-      "Right": 3
+      "Right": 1
     },
     "nullable": [
       false,
@@ -40,5 +40,5 @@
       false
     ]
   },
-  "hash": "edf2424933f6602d625da67d22e5315a63830e1d5c87c99b95699f216fd0b9bf"
+  "hash": "6c813c718b37d3555483f9178f40b9ec9761af58f7d590f684d4b8176e91d9ca"
 }

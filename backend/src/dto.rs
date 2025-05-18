@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use sqlx::types::{time::OffsetDateTime, uuid::Uuid};
+use sqlx::types::time::OffsetDateTime;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -15,7 +15,7 @@ pub struct ProjectPreview {
     pub id: String,
     pub name: String,
     pub preview: String,
-    pub thumbnail_id: Uuid,
+    pub thumbnail_id: String,
     #[serde(with = "time::serde::rfc3339")]
     pub date_posted: OffsetDateTime,
 }
@@ -25,7 +25,7 @@ pub struct ProjectPreview {
 pub struct Project {
     pub id: String,
     pub name: String,
-    pub thumbnail_id: Uuid,
+    pub thumbnail_id: String,
     pub project_url: Option<String>,
     #[serde(with = "time::serde::rfc3339")]
     pub date_posted: OffsetDateTime,

@@ -21,5 +21,4 @@ tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread", "signal"]
 tower-http = { version = "0.6.1", features = ["cors", "fs", "trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-uuid = { version = "1.8.0", features = ["serde"] }
 validator = { version = "0.20.0", features = ["derive"] }

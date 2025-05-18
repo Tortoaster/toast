@@ -1,8 +1,4 @@
-use sqlx::{
-    query, query_as,
-    types::{time::OffsetDateTime, uuid::Uuid},
-    SqlitePool,
-};
+use sqlx::{query, query_as, SqlitePool};
 
 use crate::{
     dto::{Project, ProjectIndex, ProjectPreview},
@@ -33,7 +29,7 @@ impl ProjectRepository {
                 let mut previews = query_as!(
                     ProjectPreview,
                     r#"
-SELECT id, name, preview, thumbnail_id AS "thumbnail_id: Uuid", date_posted AS "date_posted: OffsetDateTime"
+SELECT id, name, preview, thumbnail_id AS "thumbnail_id: _", date_posted AS "date_posted: _"
 FROM projects
 WHERE NOT deleted AND (date_posted, id) > (?1, ?2)
 ORDER BY date_posted, id
@@ -43,8 +39,8 @@ LIMIT ?3;
                     index.id,
                     limit,
                 )
-                    .fetch_all(&mut *transaction)
-                    .await?;
+                .fetch_all(&mut *transaction)
+                .await?;
 
                 let has_previous = previews.len() as i64 == items + 1;
                 let has_next = !previews.is_empty()
@@ -78,7 +74,7 @@ LIMIT ?3;
                 let mut previews = query_as!(
                     ProjectPreview,
                     r#"
-SELECT id, name, preview, thumbnail_id AS "thumbnail_id: Uuid", date_posted AS "date_posted: OffsetDateTime"
+SELECT id, name, preview, thumbnail_id AS "thumbnail_id: _", date_posted AS "date_posted: _"
 FROM projects
 WHERE NOT deleted AND (date_posted, id) < (?1, ?2)
 ORDER BY date_posted, id DESC
@@ -88,8 +84,8 @@ LIMIT ?3;
                     index.id,
                     limit,
                 )
-                    .fetch_all(&mut *transaction)
-                    .await?;
+                .fetch_all(&mut *transaction)
+                .await?;
 
                 let has_previous = !previews.is_empty()
                     && query!(
@@ -119,7 +115,7 @@ LIMIT ?3;
                 let mut previews = query_as!(
                     ProjectPreview,
                     r#"
-SELECT id, name, preview, thumbnail_id AS "thumbnail_id: Uuid", date_posted AS "date_posted: OffsetDateTime"
+SELECT id, name, preview, thumbnail_id AS "thumbnail_id: _", date_posted AS "date_posted: _"
 FROM projects
 WHERE NOT deleted
 ORDER BY date_posted, id DESC
@@ -127,8 +123,8 @@ LIMIT ?1;
                     "#,
                     limit,
                 )
-                    .fetch_all(&self.pool)
-                    .await?;
+                .fetch_all(&self.pool)
+                .await?;
 
                 let has_next = previews.len() as i64 == items + 1;
 
@@ -151,14 +147,14 @@ LIMIT ?1;
         let project = query_as!(
             Project,
             r#"
-SELECT id, name, thumbnail_id AS "thumbnail_id: Uuid", project_url, date_posted AS "date_posted: OffsetDateTime"
+SELECT id, name, thumbnail_id AS "thumbnail_id: _", project_url, date_posted AS "date_posted: _"
 FROM projects
 WHERE NOT deleted AND id = ?1;
             "#,
             id
         )
-            .fetch_optional(&self.pool)
-            .await?;
+        .fetch_optional(&self.pool)
+        .await?;
 
         Ok(project)
     }
