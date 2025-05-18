@@ -21,41 +21,25 @@ docker compose --profile full up -d
 
 ### Install tools
 
-#### sqlx
-
 ```shell
 cargo install sqlx-cli --no-default-features --features rustls,sqlite
+cargo install 
 ```
 
-### Run dependencies
+### Run
 
 ```shell
-docker compose up -d
-```
-
-### Run backend
-
-> See `Config.toml` for build options (these can be overridden with environment variables)
-
-```shell
-cargo run
+# Set up environment and generated files
+just down up gen
+# Run backend
+just run
+# Run frontend
+just dev
 ```
 
 ## Useful commands
 
-#### Prepare compile-time checked queries
-
-Should be run when:
-
-* New compile-time checked queries are created
-* New database migrations are created
-
-```shell
-export DATABASE_URL=sqlite://../sqlite.db
-cargo sqlx prepare
-```
-
-#### Create a database dump
+### Create a database dump
 
 Useful for creating fixtures. Run in the database container:
 
