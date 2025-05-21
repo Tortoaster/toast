@@ -8,7 +8,7 @@ services:
     environment:
       HOST: "0.0.0.0"
       RUST_LOG: "toast=info,warn"
-      DATABASE__URL: "sqlite://sqlite.db"
+      DATABASE__URL: "sqlite://sqlite/toast.db"
     depends_on:
       db-migrate:
         condition: service_completed_successfully
@@ -18,14 +18,20 @@ services:
   db-migrate:
     build:
       dockerfile: "sqlx.Dockerfile"
+    pull_policy: build
     working_dir: "/app"
-    command: [ "migrate", "run", "--source", "migrations", "--source", "fixtures" ]
+    user: "1000:1000"
+    entrypoint: >
+      /bin/sh -c " \
+        touch sqlite/toast.db && \
+        sqlx migrate run --source migrations --source fixtures \
+      "
     volumes:
       - "./migrations:/app/migrations:ro"
       - "./fixtures:/app/fixtures:ro"
-      - "./sqlite.db:/app/sqlite.db:rw"
+      - "./sqlite:/app/sqlite:rw"
     environment:
-      DATABASE_URL: "sqlite://sqlite.db"
+      DATABASE_URL: "sqlite://sqlite/toast.db"
 
   object-store:
     image: quay.io/minio/minio
