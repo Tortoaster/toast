@@ -5,6 +5,6 @@ CREATE TABLE projects
     preview      VARCHAR(300)             NOT NULL,
     thumbnail_id UUID                     NOT NULL,
     project_url  VARCHAR(2000),
-    date_posted  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+    date_posted  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     deleted      BOOLEAN                  NOT NULL DEFAULT FALSE
 );

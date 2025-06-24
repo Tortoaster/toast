@@ -1,0 +1,48 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\nSELECT id, name, preview, thumbnail_id AS \"thumbnail_id: _\", date_posted AS \"date_posted: _\"\nFROM projects\nWHERE NOT deleted AND (date_posted, id) < ($1, $2)\nORDER BY date_posted, id DESC\nLIMIT $3;\n                    ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "preview",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "thumbnail_id: _",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_posted: _",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Timestamptz",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "965c8570dd125de3efbb4272df1b1a9d4a8e11556036c9ce1911a49afa5dd9d2"
+}

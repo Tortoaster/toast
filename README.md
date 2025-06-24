@@ -9,7 +9,7 @@ A blogging application to write about my hobby projects.
 ### Install tools
 
 ```shell
-cargo install sqlx-cli --no-default-features --features rustls,sqlite
+cargo install sqlx-cli --no-default-features --features rustls,postgres
 cargo install 
 ```
 

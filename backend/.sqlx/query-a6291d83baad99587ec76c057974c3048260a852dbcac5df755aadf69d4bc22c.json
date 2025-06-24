@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\nSELECT id, name, thumbnail_id AS \"thumbnail_id: _\", project_url, date_posted AS \"date_posted: _\"\nFROM projects\nWHERE NOT deleted AND id = $1;\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "thumbnail_id: _",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "project_url",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_posted: _",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "a6291d83baad99587ec76c057974c3048260a852dbcac5df755aadf69d4bc22c"
+}

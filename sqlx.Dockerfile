@@ -17,7 +17,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
         export TARGET=x86_64-unknown-linux-musl; \
     fi && \
     rustup target add $TARGET && \
-    cargo install --target $TARGET --git https://github.com/Tortoaster/sqlx.git --rev 0c9b586 sqlx-cli --no-default-features --features rustls,sqlite
+    cargo install --target $TARGET --git https://github.com/Tortoaster/sqlx.git --rev 0c9b586 sqlx-cli --no-default-features --features rustls,postgres
 
 FROM alpine:latest
 

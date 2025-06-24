@@ -7,7 +7,7 @@ use std::{
 use config::Config;
 use serde::Deserialize;
 use serde_inline_default::serde_inline_default;
-use sqlx::sqlite::SqliteConnectOptions;
+use sqlx::postgres::PgConnectOptions;
 use tracing_subscriber::EnvFilter;
 
 #[serde_inline_default]
@@ -45,15 +45,23 @@ impl AppConfig {
         EnvFilter::new(&self.rust_log)
     }
 
-    pub fn sqlite_connect_options(&self) -> SqliteConnectOptions {
-        self.database
+    pub fn pg_connect_options(&self) -> PgConnectOptions {
+        let mut options = self
+            .database
             .url
-            .parse::<SqliteConnectOptions>()
-            .expect("invalid database url")
+            .parse::<PgConnectOptions>()
+            .expect("invalid database url");
+
+        if let Some(password) = self.database.password.as_deref() {
+            options = options.password(password);
+        }
+
+        options
     }
 }
 
 #[derive(Debug, Deserialize)]
 struct DatabaseConfig {
     url: String,
+    password: Option<String>,
 }

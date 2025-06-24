@@ -1,4 +1,4 @@
-use sqlx::{query, query_as, SqlitePool};
+use sqlx::{query, query_as, PgPool};
 
 use crate::{
     dto::{Project, ProjectIndex, ProjectPreview},
@@ -10,11 +10,11 @@ const DEFAULT_PROJECTS_PER_PAGE: i64 = 12;
 
 #[derive(Clone, Debug)]
 pub struct ProjectRepository {
-    pool: SqlitePool,
+    pool: PgPool,
 }
 
 impl ProjectRepository {
-    pub fn new(pool: SqlitePool) -> Self {
+    pub fn new(pool: PgPool) -> Self {
         Self { pool }
     }
 
@@ -31,9 +31,9 @@ impl ProjectRepository {
                     r#"
 SELECT id, name, preview, thumbnail_id AS "thumbnail_id: _", date_posted AS "date_posted: _"
 FROM projects
-WHERE NOT deleted AND (date_posted, id) > (?1, ?2)
+WHERE NOT deleted AND (date_posted, id) > ($1, $2)
 ORDER BY date_posted, id
-LIMIT ?3;
+LIMIT $3;
                     "#,
                     index.date_posted,
                     index.id,
@@ -45,8 +45,8 @@ LIMIT ?3;
                 let has_previous = previews.len() as i64 == items + 1;
                 let has_next = !previews.is_empty()
                     && query!(
-                        "SELECT id FROM projects WHERE NOT deleted AND (date_posted, id) < (?1, \
-                         ?2) LIMIT 1;",
+                        "SELECT id FROM projects WHERE NOT deleted AND (date_posted, id) < ($1, \
+                         $2) LIMIT 1;",
                         index.date_posted,
                         index.id,
                     )
@@ -76,9 +76,9 @@ LIMIT ?3;
                     r#"
 SELECT id, name, preview, thumbnail_id AS "thumbnail_id: _", date_posted AS "date_posted: _"
 FROM projects
-WHERE NOT deleted AND (date_posted, id) < (?1, ?2)
+WHERE NOT deleted AND (date_posted, id) < ($1, $2)
 ORDER BY date_posted, id DESC
-LIMIT ?3;
+LIMIT $3;
                     "#,
                     index.date_posted,
                     index.id,
@@ -89,8 +89,8 @@ LIMIT ?3;
 
                 let has_previous = !previews.is_empty()
                     && query!(
-                        "SELECT id FROM projects WHERE NOT deleted AND (date_posted, id) > (?1, \
-                         ?2) LIMIT 1;",
+                        "SELECT id FROM projects WHERE NOT deleted AND (date_posted, id) > ($1, \
+                         $2) LIMIT 1;",
                         index.date_posted,
                         index.id,
                     )
@@ -119,7 +119,7 @@ SELECT id, name, preview, thumbnail_id AS "thumbnail_id: _", date_posted AS "dat
 FROM projects
 WHERE NOT deleted
 ORDER BY date_posted, id DESC
-LIMIT ?1;
+LIMIT $1;
                     "#,
                     limit,
                 )
@@ -149,7 +149,7 @@ LIMIT ?1;
             r#"
 SELECT id, name, thumbnail_id AS "thumbnail_id: _", project_url, date_posted AS "date_posted: _"
 FROM projects
-WHERE NOT deleted AND id = ?1;
+WHERE NOT deleted AND id = $1;
             "#,
             id
         )

@@ -3,4 +3,5 @@
 rust_log = "toast=trace,warn" # default: info
 
 [database]
-url = "sqlite://../sqlite/toast.db"
+url = "postgres://user@localhost/toast"
+password = "password"

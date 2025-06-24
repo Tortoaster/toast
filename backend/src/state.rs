@@ -2,14 +2,14 @@ use std::time::Duration;
 
 use axum::extract::FromRef;
 use backoff::{ExponentialBackoff, ExponentialBackoffBuilder};
-use sqlx::SqlitePool;
+use sqlx::PgPool;
 use tracing::{info, warn};
 
 use crate::{config::AppConfig, repository::ProjectRepository};
 
 #[derive(Clone, Debug)]
 pub struct AppState {
-    pool: SqlitePool,
+    pool: PgPool,
 }
 
 impl AppState {
@@ -24,11 +24,11 @@ impl AppState {
     }
 }
 
-async fn init_pool(config: &AppConfig) -> Result<SqlitePool, &'static str> {
+async fn init_pool(config: &AppConfig) -> Result<PgPool, &'static str> {
     let pool = backoff::future::retry_notify(
         backoff_config(),
         || async {
-            let pool = SqlitePool::connect_with(config.sqlite_connect_options()).await?;
+            let pool = PgPool::connect_with(config.pg_connect_options()).await?;
             Ok(pool)
         },
         |error, duration: Duration| {
@@ -54,7 +54,7 @@ fn backoff_config() -> ExponentialBackoff {
         .build()
 }
 
-impl FromRef<AppState> for SqlitePool {
+impl FromRef<AppState> for PgPool {
     fn from_ref(input: &AppState) -> Self {
         input.pool.clone()
     }
