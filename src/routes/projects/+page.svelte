@@ -1,6 +1,5 @@
 <script lang="ts">
     import ProjectPreview from "$lib/ProjectPreview.svelte";
-    import {PUBLIC_BUCKET_URL} from '$env/static/public';
     import type {PageData} from './$types';
     import Overlay from "$lib/Overlay.svelte";
 

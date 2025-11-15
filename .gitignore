@@ -1,1 +1,2 @@
-sqlite/toast.db
+node_modules
+/.svelte-kit

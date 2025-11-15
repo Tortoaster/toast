@@ -4,7 +4,6 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prepare": "openapi-typescript openapi.json -o src/lib/client.ts --root-types --root-types-no-schema-prefix",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
@@ -19,7 +18,6 @@
     "@sveltejs/adapter-auto": "^4.0.0",
     "@sveltejs/kit": "^2.17.3",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "openapi-typescript": "^7.6.1",
     "svelte": "^5.20.4",
     "svelte-check": "^4.1.4",
     "tailwindcss": "^4.0.9",
@@ -31,7 +29,6 @@
     "@floating-ui/dom": "^1.6.13",
     "@tailwindcss/vite": "^4.0.9",
     "date-fns": "^4.1.0",
-    "marked": "^15.0.7",
-    "openapi-fetch": "^0.13.4"
+    "marked": "^15.0.7"
   }
 }

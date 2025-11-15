@@ -1,47 +1,8 @@
 # Toast
 
-![Logo](bucket_data/thumbnails/d410d185-f372-43e4-bc4b-888bada43d83)
+![Logo](turtle.png)
 
 A blogging application to write about my hobby projects.
-
-## Set-Up for Local Development or Debugging
-
-### Install tools
-
-```shell
-cargo install sqlx-cli --no-default-features --features rustls,sqlite
-cargo install 
-```
-
-### Run
-
-```shell
-# Set up environment and generated files
-just down up gen
-# Run backend
-just run
-# Run frontend
-just dev
-```
-
-## Navigation
-
-* The website itself can be found at http://localhost:8000
-* MinIO, which hosts all images and markdown files, can be accessed at http://localhost:8001
-
-## Useful commands
-
-### Create a database dump
-
-Useful for creating fixtures. Run in the database container:
-
-```shell
-pg_dump \
-	-d toast \
-	-U user \
-	--data-only \
-	--inserts
-```
 
 ## License
 
