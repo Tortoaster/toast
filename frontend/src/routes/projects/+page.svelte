@@ -22,9 +22,9 @@
 </Overlay>
 
 <main class="flex flex-wrap p-half">
-    {#each data.projects.items as project}
+    {#each data.projects as project}
         <div class="basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 p-half">
-            <ProjectPreview {project} bucketUrl={PUBLIC_BUCKET_URL}/>
+            <ProjectPreview {project} />
         </div>
     {:else}
         <p class="text-black-darker text-lg font-bold p-single w-full text-center">Nothing here yet!</p>

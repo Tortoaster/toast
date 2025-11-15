@@ -1,24 +1,24 @@
 <script lang="ts">
     import {formatDistanceToNow} from "date-fns";
-    import type {ProjectPreview} from "$lib/client";
+    import {PUBLIC_API_URL} from '$env/static/public';
+    import type {ProjectPreview} from "../routes/projects/+page";
 
     interface Props {
         project: ProjectPreview;
-        bucketUrl: string;
     }
 
-    let {project, bucketUrl}: Props = $props();
+    let {project}: Props = $props();
 </script>
 
 <div class="card bg-black-bright">
     <a href="/projects/{ project.id }" class="group">
         <img class="bg-black object-cover group-hover:object-contain aspect-card w-full"
-             alt="{ project.name } thumbnail"
-             src="{ bucketUrl }/thumbnails/{ project.thumbnailId }"/>
+             alt="{ project.thumbnail.alt }"
+             src="{ PUBLIC_API_URL }{ project.thumbnail.url }"/>
         <div class="overflow-hidden p-single aspect-card flex flex-col gap-single">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-bold">{ project.name }</h3>
-                <small class="text-gray-bright text-right">{ formatDistanceToNow(project.datePosted, {addSuffix: true}) }</small>
+                <small class="text-gray-bright text-right">{ formatDistanceToNow(project.createdAt, {addSuffix: true}) }</small>
             </div>
             <div class="description">{ project.preview }</div>
         </div>
