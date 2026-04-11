@@ -37,7 +37,10 @@
         <a class="btn text-lg mx-auto" href={data.project.project_url}>Visit project page &#x2197;</a>
     {/if}
 
-    <div class="md lg:max-w-gratio lg:mx-auto">
+    <article class="md lg:max-w-gratio lg:mx-auto">
+        <p>
+            <em>{data.project.preview}</em>
+        </p>
         {@html data.content}
-    </div>
+    </article>
 </main>
